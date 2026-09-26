@@ -95,3 +95,14 @@ describe('question sheet', () => {
     expect(qs.every((q) => !/\b(stop taking|double|skip your dose)\b/i.test(q.text))).toBe(true)
   })
 })
+
+describe('build-log attribution', async () => {
+  const { agentOf } = await import('./agents')
+  it('credits only explicit markers', () => {
+    expect(agentOf('feat: MVP\n\n- AGENTS.md shared by Claude Code and Codex\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>')).toBe('Claude Code')
+    expect(agentOf('feat: printable appointment sheet (Codex)')).toBe('Codex')
+    expect(agentOf('codex/print-and-text-size feat: printing')).toBe('Codex')
+    expect(agentOf('docs: independent code review by Codex')).toBe('Codex')
+    expect(agentOf('Merge pull request #2')).toBe('Cameron')
+  })
+})
