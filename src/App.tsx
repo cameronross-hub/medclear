@@ -100,7 +100,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <a className="brand" href="#/"><span className="logo" aria-hidden="true">Rx</span>MedClear</a>
+        <a className="brand" href="#/"><img className="logo" src={`${import.meta.env.BASE_URL}favicon.svg`} width={32} height={32} alt="" />MedClear</a>
         <nav className="tabs top" aria-label="Main">
           {tabs.map((t) => (
             <a key={t.r} href={t.r === 'list' ? '#/' : `#/${t.r}`} aria-current={route === t.r ? 'page' : undefined}>

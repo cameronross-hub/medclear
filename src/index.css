@@ -61,7 +61,7 @@ a { color: var(--primary); text-underline-offset: 3px; }
 .app { min-height: 100dvh; }
 .topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 20px; padding: calc(env(safe-area-inset-top, 0px) + 10px) 20px 10px; background: color-mix(in srgb, var(--paper) 90%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; color: var(--ink); text-decoration: none; }
-.logo { font-family: var(--mono); font-size: 0.85rem; font-weight: 700; background: var(--primary); color: var(--primary-ink); border-radius: 8px; padding: 3px 7px; }
+.logo { width: 32px; height: 32px; border-radius: 8px; box-shadow: 0 1px 3px rgb(0 0 0 / 25%); }
 .tabs.top { display: flex; gap: 4px; margin-left: auto; }
 .tabs.top a { display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; color: var(--muted); text-decoration: none; font-weight: 700; font-size: 0.95rem; }
 .tabs.top a[aria-current='page'] { background: var(--primary-soft); color: var(--primary); }
