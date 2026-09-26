@@ -85,7 +85,7 @@ src/
 - **Roadmap:** how this could plug into a care-navigation or patient-advocate workflow.
 
 ## Git and multi-agent workflow
-- The repo is `cameronross-hub/medclear`, a personal account. **Never use a student account.** The git identity is set repo-locally.
+- The repo is `cameronross-hub/medclear`, a personal account. **Never use a student account (`cameronross123`).** The git identity (`334021531+cameronross-hub@users.noreply.github.com`) and credential helper (`!gh auth git-credential`) are set repo-locally, so `git push` and `gh` both act as `cameronross-hub`. If a push is denied to another account, check `gh auth status` rather than changing global git config.
 - **Claude Code builds.** It works on feature branches (`feat/...`), merges to `main` after `npm run build` passes, and uses Conventional Commits (`feat:`, `fix:`, `docs:`, `chore:`).
 - **Codex reviews:**
   - Review any branch or PR against the checklist below and report findings as PR review comments or `REVIEW.md` notes, ordered by severity.
