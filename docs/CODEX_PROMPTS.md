@@ -20,6 +20,15 @@ codex                    # first run: choose "Sign in with ChatGPT" and log in y
 
 ---
 
+### Using the Codex Mac app instead of the terminal (what Cameron uses)
+1. Open the Codex app and **Sign in with ChatGPT**.
+2. Start a project on your local `medclear` folder (the repo root, so `AGENTS.md` is picked up).
+3. Run threads **Local** (not Cloud or Worktree) for review steps, so `REVIEW.md` lands in this folder and `gh` acts as `cameronross-hub`.
+4. Set the permission control near the message box to **Read only** for steps 1, 2 and 4, and allow edits only for step 5.
+5. Choose the strongest model with high reasoning effort. Prompts below paste in unchanged.
+
+---
+
 ## 1. Orientation (read-only, about 3 minutes)
 Use this first, so Codex builds a mental model before judging anything.
 
