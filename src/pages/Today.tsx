@@ -97,6 +97,7 @@ export function Today({ profiles, onGoToList }: { profiles: Profile[]; onGoToLis
             <Avatar p={next.profile} size={40} />
             <div>
               <b className="dose-name">{title(next.med.name ?? next.med.input)}</b>
+              {next.med.how.length > 0 && <span className="next-how">{next.med.how.join(' · ')}</span>}
               <span className="muted small">{next.profile.name}{next.med.plain ? ` · ${next.med.plain.for}` : ''}</span>
             </div>
             <button className="btn primary" onClick={() => toggle(next.key)}><Icon name="check" size={18} /> Done</button>
@@ -120,7 +121,7 @@ export function Today({ profiles, onGoToList }: { profiles: Profile[]; onGoToLis
                       <span className="dose-time">{formatTime(d.time)}</span>
                       <span className="dose-main">
                         <b className="dose-name">{title(d.med.name ?? d.med.input)}</b>
-                        {d.med.plain && <span className="muted small">{d.med.plain.cls}</span>}
+                        {d.med.how.length > 0 ? <span className="how-line">{d.med.how.join(' · ')}</span> : d.med.plain && <span className="muted small">{d.med.plain.cls}</span>}
                       </span>
                       <span className={`who-chip ${d.profile.kind}`}><Avatar p={d.profile} size={20} /> {d.profile.name}</span>
                     </label>

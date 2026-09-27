@@ -32,9 +32,9 @@ const writeStorage = (s: SavedState) => {
 }
 
 let seq = 0
-const newMed = (input: string, times: string[] = [], custom = false): Med => ({ id: `m${++seq}`, input, times, status: custom ? 'custom' : 'loading' })
+const newMed = (input: string, times: string[] = [], custom = false, how: string[] = []): Med => ({ id: `m${++seq}`, input, times, how, status: custom ? 'custom' : 'loading' })
 const hydrate = (s: SavedState): Profile[] =>
-  s.profiles.map((p) => ({ id: p.id, name: p.name, kind: p.kind, species: p.species, meds: p.meds.map((m) => newMed(m.input, m.times ?? [], !!m.custom)) }))
+  s.profiles.map((p) => ({ id: p.id, name: p.name, kind: p.kind, species: p.species, meds: p.meds.map((m) => newMed(m.input, m.times ?? [], !!m.custom, m.how ?? [])) }))
 
 export default function App() {
   const [route, setRoute] = useState<Route>(routeFromHash)
@@ -64,7 +64,7 @@ export default function App() {
       for (const m of p.meds)
         if (m.status === 'loading' && !started.current.has(m.id)) {
           started.current.add(m.id)
-          resolveMed(m).then((r) => updateMed(m.id, (cur) => ({ ...r, times: cur.times })))
+          resolveMed(m).then((r) => updateMed(m.id, (cur) => ({ ...r, times: cur.times, how: cur.how })))
         }
   }, [profiles, updateMed])
 
@@ -81,11 +81,15 @@ export default function App() {
 
   const add = (input: string) => editActive((p) => ({ ...p, meds: [...p.meds, newMed(input)] }))
   const remove = (id: string) => editActive((p) => ({ ...p, meds: p.meds.filter((m) => m.id !== id) }))
-  const retry = (m: Med) => editActive((p) => ({ ...p, meds: p.meds.map((x) => (x.id === m.id ? newMed(m.input, m.times) : x)) }))
+  const retry = (m: Med) => editActive((p) => ({ ...p, meds: p.meds.map((x) => (x.id === m.id ? newMed(m.input, m.times, false, m.how) : x)) }))
   const keep = (m: Med) => editActive((p) => ({ ...p, meds: p.meds.map((x) => (x.id === m.id ? { ...x, status: 'custom' } : x)) }))
   const setTimes = (m: Med, times: string[]) => {
     setIsExample(false)
     updateMed(m.id, (x) => ({ ...x, times }))
+  }
+  const setHow = (m: Med, how: string[]) => {
+    setIsExample(false)
+    updateMed(m.id, (x) => ({ ...x, how }))
   }
   const addProfile = ({ name, kind, species }: { name: string; kind: ProfileKind; species?: string }) => {
     const id = slug(name, profiles.map((p) => p.id))
@@ -144,7 +148,7 @@ export default function App() {
             {isExample && (
               <div className="banner" role="status">
                 <Icon name="info" />
-                <p><strong>This is an example household:</strong> Dad on eight medicines, Buddy the dog on three, and you. Add a medicine or a person to make it yours.</p>
+                <p><strong>This is an example household:</strong> you on five daily medicines, Mom on three, and Buddy the dog on three. Add a medicine or a person to make it yours.</p>
                 <button className="btn" onClick={startOwn}>Start my own</button>
               </div>
             )}
@@ -153,8 +157,8 @@ export default function App() {
               <h1>{active.kind === 'self' ? 'My medicines' : `${whose} medicines`}</h1>
               <p className="lede">
                 {active.kind === 'pet'
-                  ? `What each of ${whose} medicines is for, warnings, and questions for the vet.`
-                  : 'Plain-language explanations, FDA warnings and recalls, a daily schedule, and questions for the next appointment.'}{' '}
+                  ? `What each of ${whose} medicines is for, when and how to give it, and warnings worth asking the vet about.`
+                  : 'What each medicine is for, when and how to take it, and a daily checklist. Plus FDA warnings, recalls, and questions for your next appointment.'}{' '}
                 Private: the list never leaves this device.
               </p>
             </section>
@@ -182,6 +186,7 @@ export default function App() {
                   onPick={(s) => { remove(m.id); add(s) }}
                   onKeep={() => keep(m)}
                   onTimes={(t) => setTimes(m, t)}
+                  onHow={(h) => setHow(m, h)}
                 />
               ))}
             </div>

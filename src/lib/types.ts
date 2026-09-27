@@ -11,6 +11,8 @@ export interface Med {
   status: MedStatus
   /** Dose times as "HH:MM" (24h), entered by the user from their doctor's, pharmacist's or vet's instructions. */
   times: string[]
+  /** "How to take" instructions the user enters from their label, pharmacist or vet (e.g. "With food"). */
+  how: string[]
   name?: string
   rxcui?: string
   plain?: PlainDrug

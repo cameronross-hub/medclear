@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { formatTime } from '../lib/schedule'
+import { formatTime, HOW_OPTIONS } from '../lib/schedule'
 import type { Med } from '../lib/types'
 import { Icon } from './Icon'
 import { ScheduleEditor } from './ScheduleEditor'
@@ -36,30 +36,54 @@ interface Props {
   onPick: (s: string) => void
   onKeep: () => void
   onTimes: (t: string[]) => void
+  onHow: (h: string[]) => void
 }
 
-function Schedule({ med, pet, onTimes }: Pick<Props, 'med' | 'pet' | 'onTimes'>) {
+function HowEditor({ how, onChange, from }: { how: string[]; onChange: (h: string[]) => void; from: string }) {
   return (
-    <details className="sched-details">
-      <summary>
-        <span className="sum-icon"><Icon name="clock" size={16} /></span>
-        {med.times.length ? <>Daily schedule: {med.times.map(formatTime).join(', ')}</> : 'Add to the daily schedule'}
-      </summary>
-      <ScheduleEditor times={med.times} onChange={onTimes} whoFrom={pet ? 'your vet' : 'your doctor or pharmacist'} />
-    </details>
-  )
-}
-
-function TimesRow({ times }: { times: string[] }) {
-  if (!times.length) return null
-  return (
-    <div className="times-row" aria-label="Scheduled times">
-      {times.map((t) => <span key={t} className="time-chip small"><Icon name="clock" size={13} /> {formatTime(t)}</span>)}
+    <div className="how-editor">
+      <h4>How to take it</h4>
+      <div className="presets">
+        {HOW_OPTIONS.map((o) => {
+          const on = how.includes(o)
+          return (
+            <button key={o} type="button" className={`chip-btn toggle${on ? ' on' : ''}`} aria-pressed={on} onClick={() => onChange(on ? how.filter((x) => x !== o) : [...how, o])}>
+              {on ? '✓ ' : '+ '}{o}
+            </button>
+          )
+        })}
+      </div>
+      <p className="muted small">Pick what {from} says. MedClear doesn't add instructions on its own.</p>
     </div>
   )
 }
 
-export function MedCard({ med, pet, onRemove, onRetry, onPick, onKeep, onTimes }: Props) {
+function Schedule({ med, pet, onTimes, onHow }: Pick<Props, 'med' | 'pet' | 'onTimes' | 'onHow'>) {
+  const from = pet ? "your vet's label" : 'your label or pharmacist'
+  const summary = med.times.length ? `When: ${med.times.map(formatTime).join(', ')}` : 'Add when and how to take it'
+  return (
+    <details className="sched-details">
+      <summary>
+        <span className="sum-icon"><Icon name="clock" size={16} /></span>
+        {summary}
+      </summary>
+      <ScheduleEditor times={med.times} onChange={onTimes} whoFrom={pet ? 'your vet' : 'your doctor or pharmacist'} />
+      <HowEditor how={med.how} onChange={onHow} from={from} />
+    </details>
+  )
+}
+
+function TimesRow({ times, how }: { times: string[]; how: string[] }) {
+  if (!times.length && !how.length) return null
+  return (
+    <div className="times-row" aria-label="When and how to take it">
+      {times.map((t) => <span key={t} className="time-chip small"><Icon name="clock" size={13} /> {formatTime(t)}</span>)}
+      {how.map((h) => <span key={h} className="how-chip">{h}</span>)}
+    </div>
+  )
+}
+
+export function MedCard({ med, pet, onRemove, onRetry, onPick, onKeep, onTimes, onHow }: Props) {
   if (med.status === 'loading') {
     return (
       <article className="card rx loading" aria-busy="true">
@@ -97,9 +121,9 @@ export function MedCard({ med, pet, onRemove, onRetry, onPick, onKeep, onTimes }
       <article className="card rx">
         <div className="rx-strip"><span>Rx</span><span className="rx-class">Added by you</span><button className="icon-btn" onClick={onRemove} aria-label={`Remove ${med.input}`}><Icon name="trash" size={18} /></button></div>
         <h3 className="rx-name">{med.input}</h3>
-        <TimesRow times={med.times} />
+        <TimesRow times={med.times} how={med.how} />
         <div className="for"><Icon name="info" size={22} /><p>Not in the FDA or NIH drug databases, for example a supplement or a compounded medicine. Ask {pet ? 'your vet' : 'your pharmacist'} what it's for.</p></div>
-        <div className="sections"><Schedule med={med} pet={pet} onTimes={onTimes} /></div>
+        <div className="sections"><Schedule med={med} pet={pet} onTimes={onTimes} onHow={onHow} /></div>
         <footer className="rx-foot"><span className="muted">No database information for this entry.</span></footer>
       </article>
     )
@@ -118,7 +142,7 @@ export function MedCard({ med, pet, onRemove, onRetry, onPick, onKeep, onTimes }
       </div>
       <h3 className="rx-name">{name}</h3>
       {brands.length > 0 && <p className="rx-brands">Also sold as {brands.slice(0, 3).join(', ')}</p>}
-      <TimesRow times={med.times} />
+      <TimesRow times={med.times} how={med.how} />
 
       {pet && !plain?.vet && (
         <div className="pet-note" role="note">
@@ -140,7 +164,7 @@ export function MedCard({ med, pet, onRemove, onRetry, onPick, onKeep, onTimes }
       </div>
 
       <div className="sections">
-        <Schedule med={med} pet={pet} onTimes={onTimes} />
+        <Schedule med={med} pet={pet} onTimes={onTimes} onHow={onHow} />
         {plain && (
           <details open={!pet || plain.vet}>
             <summary>Things to ask about or watch for</summary>

@@ -76,7 +76,7 @@ describe('plain-language lookup', () => {
 })
 
 describe('question sheet', () => {
-  const med = (over: Partial<Med>): Med => ({ id: Math.random().toString(), input: 'x', status: 'ready', times: [], ...over })
+  const med = (over: Partial<Med>): Med => ({ id: Math.random().toString(), input: 'x', status: 'ready', times: [], how: [], ...over })
   it('adds boxed-warning, recall, curated and list questions', () => {
     const qs = buildQuestions([
       med({ name: 'warfarin', plain: findPlain('warfarin'), label: { boxedHeadline: 'Bleeding risk' } as never, recalls: [] }),
@@ -110,7 +110,7 @@ describe('build-log attribution', async () => {
 describe('pets and custom entries in the question sheet', async () => {
   const { buildQuestions } = await import('./questions')
   const { findPlain } = await import('./plain')
-  const m = (over: Partial<Med>): Med => ({ id: Math.random().toString(), input: 'x', status: 'ready', times: [], ...over })
+  const m = (over: Partial<Med>): Med => ({ id: Math.random().toString(), input: 'x', status: 'ready', times: [], how: [], ...over })
   it('addresses the vet and skips human-only curated questions for pets', () => {
     const qs = buildQuestions([m({ name: 'gabapentin', plain: findPlain('gabapentin') }), m({ name: 'carprofen', plain: findPlain('Rimadyl') })], { kind: 'pet', name: 'Buddy' })
     expect(findPlain('Rimadyl')?.vet).toBe(true)
@@ -141,7 +141,7 @@ describe('schedule', async () => {
     expect(s.addTime(['08:00'], '')).toEqual(['08:00'])
   })
   it('orders doses across profiles and finds the next one', () => {
-    const med = (input: string, times: string[]): Med => ({ id: input, input, status: 'ready', times })
+    const med = (input: string, times: string[]): Med => ({ id: input, input, status: 'ready', times, how: [] })
     const profiles = [
       { id: 'dad', name: 'Dad', kind: 'person' as const, meds: [med('metformin', ['08:00', '18:00'])] },
       { id: 'buddy', name: 'Buddy', kind: 'pet' as const, meds: [med('Rimadyl', ['08:00'])] },
@@ -175,8 +175,24 @@ describe('profiles storage', async () => {
     expect(p.possessive({ name: 'Me', kind: 'self' })).toBe('My')
     expect(p.slug('Mom', ['mom'])).toBe('mom-2')
   })
-  it('example household has Dad, a dog and Me with schedules', () => {
-    expect(p.EXAMPLE_STATE.profiles.map((x) => x.kind)).toEqual(['person', 'pet', 'self'])
+  it('example household has Me, Mom and a dog, with schedules', () => {
+    expect(p.EXAMPLE_STATE.profiles.map((x) => x.kind)).toEqual(['self', 'person', 'pet'])
     expect(p.EXAMPLE_STATE.profiles.every((x) => x.meds.every((m) => m.times.length > 0))).toBe(true)
+  })
+})
+
+describe('how-to-take instructions', async () => {
+  const p = await import('./profiles')
+  const { HOW_OPTIONS } = await import('./schedule')
+  it('example instructions only use the offered options', () => {
+    const used = p.EXAMPLE_STATE.profiles.flatMap((x) => x.meds.flatMap((m) => m.how ?? []))
+    expect(used.length).toBeGreaterThan(0)
+    expect(used.every((h) => HOW_OPTIONS.includes(h))).toBe(true)
+  })
+  it('saves instructions only when present', () => {
+    const med = (input: string, how: string[]) => ({ id: input, input, status: 'ready' as const, times: ['08:00'], how })
+    const s = p.toSaved([{ id: 'me', name: 'Me', kind: 'self', meds: [med('metformin', ['With food']), med('lisinopril', [])] }], 'me')
+    expect(s.profiles[0].meds[0].how).toEqual(['With food'])
+    expect(s.profiles[0].meds[1].how).toBeUndefined()
   })
 })
