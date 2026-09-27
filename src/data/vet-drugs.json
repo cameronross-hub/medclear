@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "note": "Veterinary-only medicines have no FDA human drug label. General plain-language summaries drafted with AI from manufacturer and FDA Center for Veterinary Medicine information, for education only. Not veterinary advice.",
+    "drafted": "2026-09-27",
+    "humanReview": "pending"
+  },
+  "drugs": [
+    {"g":"carprofen","brands":["Rimadyl","Novox","Vetprofen","Carprieve"],"cls":"Veterinary NSAID (pain and inflammation)","for":"Relieves pain and inflammation in dogs, often from arthritis or after surgery.","watch":["Vomiting, diarrhea, black or tarry stool, or not eating","Can affect the liver and kidneys; vets often check bloodwork","Don't combine with other NSAIDs, steroids or human pain relievers unless your vet says so"],"ask":["Does my dog need bloodwork while taking this, and how often?"]},
+    {"g":"oclacitinib","brands":["Apoquel"],"cls":"Veterinary allergy medicine (JAK inhibitor)","for":"Controls itching from allergies and allergic skin disease in dogs.","watch":["Not for dogs under 12 months old or with serious infections","Watch for new lumps, infections, vomiting or diarrhea"],"ask":["Is long-term use right for my dog, and how will we check on it?"]},
+    {"g":"pimobendan","brands":["Vetmedin"],"cls":"Veterinary heart medicine","for":"Helps the heart pump more strongly in dogs with certain kinds of heart disease or heart failure.","watch":["Usually given about an hour before a meal","Report loss of appetite, coughing, fainting or faster breathing at rest"],"ask":["What resting breathing rate should we watch for at home?"]},
+    {"g":"grapiprant","brands":["Galliprant"],"cls":"Veterinary arthritis medicine","for":"Controls pain and inflammation from osteoarthritis in dogs.","watch":["Vomiting, diarrhea or reduced appetite","Don't combine with NSAIDs or steroids unless your vet says so"],"ask":["Can this be used with my dog's other pain medicines?"]}
+  ]
+}

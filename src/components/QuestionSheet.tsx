@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { buildQuestions } from '../lib/questions'
-import type { Med, Question } from '../lib/types'
+import { audience, possessive } from '../lib/profiles'
+import type { Profile, Question } from '../lib/types'
 import { Icon } from './Icon'
 
 const REASON: Record<Question['reason'], string> = {
@@ -11,19 +12,21 @@ const REASON: Record<Question['reason'], string> = {
   list: 'Whole list',
 }
 
-export function QuestionSheet({ meds, onGoToList }: { meds: Med[]; onGoToList: () => void }) {
-  const questions = useMemo(() => buildQuestions(meds), [meds])
+export function QuestionSheet({ profile, onGoToList }: { profile: Profile; onGoToList: () => void }) {
+  const meds = profile.meds
+  const questions = useMemo(() => buildQuestions(profile.meds, profile), [profile])
+  const forWhom = profile.kind === 'self' ? `your ${audience(profile)}` : `${possessive(profile)} ${audience(profile)}`
   const [skipped, setSkipped] = useState<Set<string>>(new Set())
   const [copied, setCopied] = useState(false)
   const kept = questions.filter((q) => !skipped.has(q.text))
-  const ready = meds.filter((m) => m.status === 'ready')
+  const ready = meds.filter((m) => m.status === 'ready' || m.status === 'custom')
 
   if (!ready.length) {
     return (
       <section className="empty">
         <Icon name="question" size={40} />
         <h2>No questions yet</h2>
-        <p>Add medicines to your list and we'll suggest questions to bring to the next appointment.</p>
+        <p>Add medicines to {profile.kind === 'self' ? 'your' : `${possessive(profile)}`} list and we'll suggest questions to bring to the next appointment.</p>
         <button className="btn primary" onClick={onGoToList}>Go to my list</button>
       </section>
     )
@@ -35,7 +38,7 @@ export function QuestionSheet({ meds, onGoToList }: { meds: Med[]; onGoToList: (
     groups.set(k, [...(groups.get(k) ?? []), q])
   }
   const asText = () =>
-    [`Questions for my advocate or doctor (${new Date().toLocaleDateString()})`, `Medicines: ${ready.map((m) => m.name).join(', ')}`, '']
+    [`Questions for ${forWhom} (${new Date().toLocaleDateString()})`, `Medicines: ${ready.map((m) => m.name ?? m.input).join(', ')}`, '']
       .concat(kept.map((q, i) => `${i + 1}. ${q.about ? `[${q.about}] ` : ''}${q.text}`))
       .join('\n')
 
@@ -44,7 +47,7 @@ export function QuestionSheet({ meds, onGoToList }: { meds: Med[]; onGoToList: (
       <div className="sheet-head">
         <div>
           <p className="eyebrow">Bring this to the appointment</p>
-          <h2 id="sheet-title">Questions for your advocate or doctor</h2>
+          <h2 id="sheet-title">Questions for {forWhom}</h2>
           <p className="muted">{kept.length} questions · {ready.length} medicines · uncheck any you don't need</p>
         </div>
         <div className="sheet-actions">
@@ -66,7 +69,7 @@ export function QuestionSheet({ meds, onGoToList }: { meds: Med[]; onGoToList: (
         </div>
       </div>
 
-      <div className="print-only print-meds">Medicines: {ready.map((m) => m.name).join(', ')}</div>
+      <div className="print-only print-meds">Medicines: {ready.map((m) => m.name ?? m.input).join(', ')}</div>
 
       {[...groups.entries()].map(([about, qs]) => (
         <div className="q-group" key={about}>
@@ -95,7 +98,7 @@ export function QuestionSheet({ meds, onGoToList }: { meds: Med[]; onGoToList: (
           </ul>
         </div>
       ))}
-      <p className="muted small">MedClear suggests questions. It doesn't give medical advice. Don't start, stop, or change a medicine without talking to your doctor or pharmacist.</p>
+      <p className="muted small">MedClear suggests questions. It doesn't give medical or veterinary advice. Don't start, stop, or change a medicine without talking to a doctor, pharmacist or vet.</p>
     </section>
   )
 }

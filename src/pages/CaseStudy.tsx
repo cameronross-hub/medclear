@@ -22,7 +22,7 @@ export function CaseStudy() {
         <div className="tiles">
           <div><b>$0</b><span>to run: public FDA and NIH data, no accounts</span></div>
           <div><b>0</b><span>pieces of personal data sent to a server</span></div>
-          <div><b>{plainDrugs.length}</b><span>common Medicare drugs with plain-language summaries</span></div>
+          <div><b>{plainDrugs.length}</b><span>medicines with plain-language summaries, including {plainDrugs.filter((d) => d.vet).length} for pets</span></div>
           <div><b>4</b><span>live public data sources</span></div>
         </div>
       </header>
@@ -33,8 +33,12 @@ export function CaseStudy() {
           <div className="avatar" aria-hidden="true">L</div>
           <div>
             <h3>Linda, 48 <span className="tag list">Illustrative persona</span></h3>
-            <p>Works full-time and coordinates care for her father, Robert (74), who takes eight daily medicines prescribed by three different doctors. She isn't clinical. Before each appointment she wonders what each pill is for, whether any are risky together, and what to ask.</p>
+            <p>Works full-time and coordinates care for her father, Robert (74), who takes eight daily medicines prescribed by three different doctors, and for the family's elderly dog, who takes three more. She isn't clinical. She wonders what each pill is for, when each one is due, and what to ask at the next appointment.</p>
           </div>
+        </div>
+        <div className="insight-box">
+          <Icon name="bulb" />
+          <p><strong>What changed after version 1:</strong> my dad takes many medicines and needs reminders of when to take them and what each one is for, and his elderly dog takes several too. One list per device wasn't enough, so v2 added profiles for people and pets and a daily checklist.</p>
         </div>
         <div className="journey" role="list" aria-label="Caregiver journey without and with MedClear">
           {[
@@ -67,7 +71,7 @@ export function CaseStudy() {
           </details>
           <details>
             <summary>Non-goals</summary>
-            <ul><li>Medical advice, dosing, or telling anyone to start or stop a drug</li><li>A full drug-interaction checker (the free NIH interaction API was retired in 2024; the app shows label text instead)</li><li>Accounts, cloud storage, or collecting health data</li></ul>
+            <ul><li>Medical or veterinary advice, dosing, or telling anyone to start or stop a drug</li><li>Push notifications, which would need a server; the Today checklist works on the device instead</li><li>A full drug-interaction checker (the free NIH interaction API was retired in 2024; the app shows label text instead)</li><li>Accounts, cloud storage, or collecting health data</li></ul>
           </details>
           <details>
             <summary>Requirements</summary>
@@ -76,6 +80,7 @@ export function CaseStudy() {
               <li><span className="tag boxed">P0</span> Plain-language purpose, boxed warnings, active recalls, cited sources</li>
               <li><span className="tag boxed">P0</span> Printable, editable question sheet</li>
               <li><span className="tag curated">P1</span> Installable phone app that works offline for lists already looked up</li>
+              <li><span className="tag curated">P1</span> Profiles for each person or pet, and a daily checklist of the dose times the user enters</li>
               <li><span className="tag curated">P1</span> Accessible to older eyes: large type, high contrast, keyboard support</li>
             </ul>
           </details>
@@ -128,8 +133,8 @@ export function CaseStudy() {
       <section className="case-sec">
         <h2><Icon name="list" /> Roadmap</h2>
         <div className="roadmap">
-          <div><h3>Now</h3><ul><li>Plain-language cards</li><li>Recalls and boxed warnings</li><li>Question sheet</li><li>Installable app</li></ul></div>
-          <div><h3>Next</h3><ul><li>Human pharmacist review of every summary</li><li>Snap a photo of a pill bottle to add it</li><li>Spanish</li><li>Usability tests with five caregivers</li></ul></div>
+          <div><h3>Now</h3><ul><li>Plain-language cards</li><li>Recalls and boxed warnings</li><li>Question sheets per person or pet</li><li>Profiles and a daily dose checklist</li><li>Installable app</li></ul></div>
+          <div><h3>Next</h3><ul><li>Calendar export so the phone itself sends reminders</li><li>Pharmacist and vet review of every summary</li><li>Snap a photo of a pill bottle to add it</li><li>Spanish</li><li>Usability tests with five caregivers</li></ul></div>
           <div><h3>Later: inside an advocacy platform</h3><ul><li>Patient shares the list with their advocate at intake</li><li>Advocate sees flagged meds before specialist visits</li><li>Questions flow into the visit-prep brief</li></ul></div>
         </div>
       </section>
