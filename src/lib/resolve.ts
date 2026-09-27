@@ -33,6 +33,12 @@ export async function resolveMed(base: Med): Promise<Med> {
   const name = plain?.g ?? ing?.name
   if (!name) return { ...base, status: 'notfound', suggestions: await spellingSuggestions(query) }
 
+  // Veterinary-only medicines have no FDA human label or human recall data; don't imply "no recalls found".
+  if (plain?.vet) {
+    const edu = ing ? await getEducation(ing.rxcui).catch(() => undefined) : undefined
+    return { ...base, status: 'ready', name, rxcui: ing?.rxcui, plain, label: null, recalls: undefined, edu, failed: [] }
+  }
+
   const failed: string[] = []
   const [label, recalls, edu] = await Promise.all([
     getLabel(name).catch(() => (failed.push('FDA label'), undefined)),

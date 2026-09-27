@@ -1,9 +1,10 @@
 # MedClear
 
-**Understand every medicine on the list.** MedClear is a free, private web app for family caregivers of older adults. Type in a parent's medications and get:
+**Understand every medicine on the list.** MedClear is a free, private web app for keeping track of medicines for yourself, a parent, or a pet. Add a profile for each person or animal, type in their medications, and get:
 
 - a plain-language card for each medicine: what it's for, what to watch for, FDA boxed warnings, active recalls, and links to the official label;
-- a printable **"Questions for your advocate or doctor"** sheet, grouped by medicine.
+- a printable **question sheet** for the next appointment, addressed to the doctor, or to the vet for pets;
+- a **Today** checklist of the dose times you enter, across everyone you care for.
 
 It installs on a phone like an app and works offline for lists you've already looked up.
 

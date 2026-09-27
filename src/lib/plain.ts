@@ -1,4 +1,5 @@
 import data from '../data/plain-language.json'
+import vet from '../data/vet-drugs.json'
 
 export interface PlainDrug {
   g: string
@@ -7,10 +8,12 @@ export interface PlainDrug {
   for: string
   watch: string[]
   ask: string[]
+  /** Veterinary-only medicine: no FDA human label or human recall data applies. */
+  vet?: boolean
 }
 
 export const plainMeta = data.meta
-export const plainDrugs: PlainDrug[] = data.drugs
+export const plainDrugs: PlainDrug[] = [...data.drugs, ...vet.drugs.map((d) => ({ ...d, vet: true }))]
 
 /** "Metformin 500 mg twice daily" -> "metformin". Keeps multi-word names like "insulin glargine". */
 export function normalizeInput(input: string): string {

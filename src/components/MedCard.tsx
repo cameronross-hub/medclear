@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { formatTime } from '../lib/schedule'
 import type { Med } from '../lib/types'
 import { Icon } from './Icon'
+import { ScheduleEditor } from './ScheduleEditor'
 
 const CLASS_PLAIN: Record<string, string> = {
   'Class I': 'the most serious type: could cause serious harm',
@@ -25,7 +27,39 @@ function LongText({ text }: { text: string }) {
   )
 }
 
-export function MedCard({ med, onRemove, onRetry, onPick }: { med: Med; onRemove: () => void; onRetry: () => void; onPick: (s: string) => void }) {
+interface Props {
+  med: Med
+  /** Set when the list belongs to a pet: cards then point to the vet and flag human drug data. */
+  pet?: { name: string } | null
+  onRemove: () => void
+  onRetry: () => void
+  onPick: (s: string) => void
+  onKeep: () => void
+  onTimes: (t: string[]) => void
+}
+
+function Schedule({ med, pet, onTimes }: Pick<Props, 'med' | 'pet' | 'onTimes'>) {
+  return (
+    <details className="sched-details">
+      <summary>
+        <span className="sum-icon"><Icon name="clock" size={16} /></span>
+        {med.times.length ? <>Daily schedule: {med.times.map(formatTime).join(', ')}</> : 'Add to the daily schedule'}
+      </summary>
+      <ScheduleEditor times={med.times} onChange={onTimes} whoFrom={pet ? 'your vet' : 'your doctor or pharmacist'} />
+    </details>
+  )
+}
+
+function TimesRow({ times }: { times: string[] }) {
+  if (!times.length) return null
+  return (
+    <div className="times-row" aria-label="Scheduled times">
+      {times.map((t) => <span key={t} className="time-chip small"><Icon name="clock" size={13} /> {formatTime(t)}</span>)}
+    </div>
+  )
+}
+
+export function MedCard({ med, pet, onRemove, onRetry, onPick, onKeep, onTimes }: Props) {
   if (med.status === 'loading') {
     return (
       <article className="card rx loading" aria-busy="true">
@@ -46,6 +80,7 @@ export function MedCard({ med, onRemove, onRetry, onPick }: { med: Med; onRemove
             {!!med.suggestions?.length && (
               <div className="chips">{med.suggestions.map((s) => <button key={s} className="chip-btn" onClick={() => onPick(s)}>{s}</button>)}</div>
             )}
+            <button className="link-btn keep" onClick={onKeep}><Icon name="plus" size={16} /> Keep “{med.input}” on the list anyway (for example, a supplement)</button>
           </>
         ) : (
           <>
@@ -53,6 +88,19 @@ export function MedCard({ med, onRemove, onRetry, onPick }: { med: Med; onRemove
             <button className="btn" onClick={onRetry}>Try again</button>
           </>
         )}
+      </article>
+    )
+  }
+
+  if (med.status === 'custom') {
+    return (
+      <article className="card rx">
+        <div className="rx-strip"><span>Rx</span><span className="rx-class">Added by you</span><button className="icon-btn" onClick={onRemove} aria-label={`Remove ${med.input}`}><Icon name="trash" size={18} /></button></div>
+        <h3 className="rx-name">{med.input}</h3>
+        <TimesRow times={med.times} />
+        <div className="for"><Icon name="info" size={22} /><p>Not in the FDA or NIH drug databases, for example a supplement or a compounded medicine. Ask {pet ? 'your vet' : 'your pharmacist'} what it's for.</p></div>
+        <div className="sections"><Schedule med={med} pet={pet} onTimes={onTimes} /></div>
+        <footer className="rx-foot"><span className="muted">No database information for this entry.</span></footer>
       </article>
     )
   }
@@ -70,8 +118,17 @@ export function MedCard({ med, onRemove, onRetry, onPick }: { med: Med; onRemove
       </div>
       <h3 className="rx-name">{name}</h3>
       {brands.length > 0 && <p className="rx-brands">Also sold as {brands.slice(0, 3).join(', ')}</p>}
+      <TimesRow times={med.times} />
+
+      {pet && !plain?.vet && (
+        <div className="pet-note" role="note">
+          <Icon name="paw" size={18} />
+          <p><strong>This information is about people.</strong> Some human medicines are prescribed for animals, but doses, effects and risks differ. Ask {pet.name}'s vet.</p>
+        </div>
+      )}
 
       <div className="pills">
+        {plain?.vet && <span className="pill vet"><Icon name="paw" size={15} /> Veterinary medicine</span>}
         {label?.boxedHeadline && <span className="pill warn"><Icon name="alert" size={15} /> Boxed warning</span>}
         {recalls && recalls.length > 0 && <span className="pill crit"><Icon name="recall" size={15} /> {recalls.length} active recall{recalls.length > 1 ? 's' : ''}</span>}
         {recalls && recalls.length === 0 && <span className="pill ok"><Icon name="check" size={15} /> No active recalls found</span>}
@@ -83,8 +140,9 @@ export function MedCard({ med, onRemove, onRetry, onPick }: { med: Med; onRemove
       </div>
 
       <div className="sections">
+        <Schedule med={med} pet={pet} onTimes={onTimes} />
         {plain && (
-          <details open>
+          <details open={!pet || plain.vet}>
             <summary>Things to ask about or watch for</summary>
             <ul>{plain.watch.map((w) => <li key={w}>{w}</li>)}</ul>
           </details>
@@ -125,7 +183,7 @@ export function MedCard({ med, onRemove, onRetry, onPick }: { med: Med; onRemove
         <span className="muted">Sources:</span>
         {label && <a href={label.url} target="_blank" rel="noreferrer">FDA label (DailyMed) <Icon name="external" size={13} /></a>}
         {edu?.slice(0, 2).map((l) => <a key={l.href} href={l.href} target="_blank" rel="noreferrer">MedlinePlus: {l.title} <Icon name="external" size={13} /></a>)}
-        {plain && <span className="muted">Summary drafted with AI from FDA labeling</span>}
+        {plain && <span className="muted">Summary drafted with AI from {plain.vet ? 'veterinary drug information' : 'FDA labeling'}</span>}
         {!!med.failed?.length && <span className="muted">Couldn't load: {med.failed.join(', ')}</span>}
       </footer>
     </article>

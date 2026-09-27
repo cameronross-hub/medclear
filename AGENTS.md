@@ -3,7 +3,7 @@
 Single source of truth for every coding agent on this repo (Codex reads this file directly; Claude Code reads it via `CLAUDE.md`). Keep it current: when a command, convention, or decision changes, update this file in the same commit.
 
 ## What this is
-MedClear is a free, privacy-first web app that helps **Medicare-age patients and their caregivers understand a medication list**. A caregiver types in a parent's medications and gets plain-language cards (what it's for, key warnings, recall status, where to learn more) plus a printable "Questions for your advocate or doctor" sheet.
+MedClear is a free, privacy-first web app that helps **Medicare-age patients and their caregivers understand a medication list**. Users keep a medication list for themselves, family members, or pets (profiles), enter the dose times they were given, and check doses off on a daily **Today** checklist. For each medicine they get plain-language cards (what it's for, key warnings, recall status, where to learn more) plus a printable "Questions for your advocate or doctor" sheet.
 
 It is a healthcare product portfolio project by Cameron Ross (GitHub: `cameronross-hub`). It has to work as a product and also show product thinking. The `/case-study` page is part of the deliverable.
 
@@ -15,9 +15,10 @@ It is a healthcare product portfolio project by Cameron Ross (GitHub: `cameronro
    - Everything runs client-side.
    - No personal data in URLs or query strings, no analytics trackers, no server-side storage.
    - `localStorage` is optional convenience only: wrap it in try/catch and offer a "Clear my list" control.
-3. **Not medical advice.**
+3. **Not medical or veterinary advice.**
    - Every results view shows a clear disclaimer.
-   - Never tell the user to start, stop or change a dose.
+   - Never tell the user to start, stop or change a dose. Dose **times** are only what the user enters from their doctor, pharmacist or vet; the app never suggests times or doses.
+   - Pet profiles: human drug data is shown with a clear "this is about people, ask your vet" note. Veterinary-only medicines come from `src/data/vet-drugs.json` and never show human FDA label or recall data (no false "no recalls found").
    - Frame everything as "questions to ask your doctor, pharmacist, or advocate."
 4. **No fabricated data.**
    - Never invent usage metrics, testimonials or outcomes.
@@ -62,13 +63,17 @@ npx pwa-assets-generator   # regenerate app icons from public/favicon.svg
 ```
 src/
   api/          http.ts (fetch + timeout, NotFoundError), rxnav.ts, openfda.ts, medlineplus.ts
-  data/         plain-language.json   (60 curated drugs; meta.humanReview = "pending")
-  lib/          plain.ts (lookup/normalize/suggest), resolve.ts (one med -> card data),
+  data/         plain-language.json   (60 curated human drugs; meta.humanReview = "pending")
+                vet-drugs.json        (4 curated veterinary drugs; merged in plain.ts with vet: true)
+  lib/          profiles.ts (v2 saved state, v1 migration, example household, possessives),
+                schedule.ts (times, slots, today's doses, next dose),
+                plain.ts (lookup/normalize/suggest), resolve.ts (one med -> card data),
                 questions.ts (question sheet), agents.ts (build-log attribution), types.ts, lib.test.ts
-  components/   Icon, MedInput (combobox), MedCard (pharmacy-label card), QuestionSheet, BuildLog
-  pages/        CaseStudy.tsx
-  App.tsx       routes, list state, localStorage, example list, summary row, bottom tab bar (mobile)
+  components/   Icon, MedInput (combobox), MedCard (pharmacy-label card), ProfileBar, ScheduleEditor, QuestionSheet, BuildLog
+  pages/        Today.tsx (daily checklist), CaseStudy.tsx
+  App.tsx       routes (#/, #/today, #/questions, #/about), profiles state, localStorage, example household, bottom tab bar
 ```
+- **Storage keys:** `medclear-state-v2` (profiles, inputs, times), `medclear-taken` (today's checked doses; resets daily). The v1 key `medclear-list` is migrated once and removed.
 - **CORS verified (2026-09-25):** RxNav, openFDA and MedlinePlus Connect all return `access-control-allow-origin: *`. No proxy needed.
 - openFDA returns **404 for "no results"**, which is expected. Browser consoles will show these as errors for drugs with no recalls. `getJson` maps a 404 to `NotFoundError`.
 
