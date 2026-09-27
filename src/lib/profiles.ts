@@ -4,6 +4,7 @@ import type { Med, Profile, ProfileKind } from './types'
 export interface SavedMed {
   input: string
   times: string[]
+  how?: string[]
   custom?: boolean
 }
 export interface SavedProfile {
@@ -25,20 +26,27 @@ export const LEGACY_KEY = 'medclear-list'
 /** A household shown on first visit so the app opens in a realistic working state. */
 export const EXAMPLE_STATE: SavedState = {
   v: 2,
-  activeId: 'dad',
+  activeId: 'me',
   profiles: [
     {
-      id: 'dad',
-      name: 'Dad',
+      id: 'me',
+      name: 'Me',
+      kind: 'self',
+      meds: [
+        { input: 'metformin 500 mg', times: ['08:00', '18:00'], how: ['With food'] },
+        { input: 'lisinopril', times: ['08:00'] },
+        { input: 'amlodipine', times: ['08:00'] },
+        { input: 'omeprazole', times: ['07:30'], how: ['Before a meal'] },
+        { input: 'Lipitor', times: ['21:00'] },
+      ],
+    },
+    {
+      id: 'mom',
+      name: 'Mom',
       kind: 'person',
       meds: [
-        { input: 'metformin 500 mg', times: ['08:00', '18:00'] },
-        { input: 'lisinopril', times: ['08:00'] },
-        { input: 'Lipitor', times: ['21:00'] },
-        { input: 'amlodipine', times: ['08:00'] },
-        { input: 'levothyroxine', times: ['06:30'] },
+        { input: 'levothyroxine', times: ['06:30'], how: ['Empty stomach', 'With a full glass of water'] },
         { input: 'warfarin', times: ['18:00'] },
-        { input: 'omeprazole', times: ['07:30'] },
         { input: 'donepezil', times: ['21:00'] },
       ],
     },
@@ -53,7 +61,6 @@ export const EXAMPLE_STATE: SavedState = {
         { input: 'Apoquel', times: ['08:00'] },
       ],
     },
-    { id: 'me', name: 'Me', kind: 'self', meds: [{ input: 'cetirizine', times: ['08:00'] }] },
   ],
 }
 
@@ -70,7 +77,7 @@ export function loadState(storage: Storage): SavedState | null {
     const v1 = storage.getItem(LEGACY_KEY)
     if (v1) {
       const list = JSON.parse(v1) as string[]
-      return { v: 2, activeId: 'mine', profiles: [{ id: 'mine', name: 'My list', kind: 'self', meds: list.map((input) => ({ input, times: [] })) }] }
+      return { v: 2, activeId: 'mine', profiles: [{ id: 'mine', name: 'My list', kind: 'self', meds: list.map((input) => ({ input, times: [], how: [] })) }] }
     }
   } catch {
     /* corrupted or unavailable storage: fall through to first-visit behavior */
@@ -87,7 +94,7 @@ export function toSaved(profiles: Profile[], activeId: string): SavedState {
       name: p.name,
       kind: p.kind,
       species: p.species,
-      meds: p.meds.map((m) => ({ input: m.input, times: m.times, ...(m.status === 'custom' ? { custom: true } : {}) })),
+      meds: p.meds.map((m) => ({ input: m.input, times: m.times, ...(m.how.length ? { how: m.how } : {}), ...(m.status === 'custom' ? { custom: true } : {}) })),
     })),
   }
 }

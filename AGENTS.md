@@ -3,7 +3,7 @@
 Single source of truth for every coding agent on this repo (Codex reads this file directly; Claude Code reads it via `CLAUDE.md`). Keep it current: when a command, convention, or decision changes, update this file in the same commit.
 
 ## What this is
-MedClear is a free, privacy-first web app that helps **Medicare-age patients and their caregivers understand a medication list**. Users keep a medication list for themselves, family members, or pets (profiles), enter the dose times they were given, and check doses off on a daily **Today** checklist. For each medicine they get plain-language cards (what it's for, key warnings, recall status, where to learn more) plus a printable "Questions for your advocate or doctor" sheet.
+MedClear is a free, privacy-first web app that helps **Medicare-age patients and their caregivers understand a medication list**. Users keep a medication list for themselves, family members, or pets (profiles), enter the dose times and how-to-take instructions ("With food", "Empty stomach"…) they were given, and check doses off on a daily **Today** checklist. For each medicine they get plain-language cards (what it's for, key warnings, recall status, where to learn more) plus a printable "Questions for your advocate or doctor" sheet.
 
 It is a healthcare product portfolio project by Cameron Ross (GitHub: `cameronross-hub`). It has to work as a product and also show product thinking. The `/case-study` page is part of the deliverable.
 
@@ -17,7 +17,7 @@ It is a healthcare product portfolio project by Cameron Ross (GitHub: `cameronro
    - `localStorage` is optional convenience only: wrap it in try/catch and offer a "Clear my list" control.
 3. **Not medical or veterinary advice.**
    - Every results view shows a clear disclaimer.
-   - Never tell the user to start, stop or change a dose. Dose **times** are only what the user enters from their doctor, pharmacist or vet; the app never suggests times or doses.
+   - Never tell the user to start, stop or change a dose. Dose **times** and **how-to-take** chips are only what the user enters from their doctor, pharmacist or vet; the app never suggests times or doses.
    - Pet profiles: human drug data is shown with a clear "this is about people, ask your vet" note. Veterinary-only medicines come from `src/data/vet-drugs.json` and never show human FDA label or recall data (no false "no recalls found").
    - Frame everything as "questions to ask your doctor, pharmacist, or advocate."
 4. **No fabricated data.**

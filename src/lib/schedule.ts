@@ -1,5 +1,8 @@
 import type { Med, Profile } from './types'
 
+/** Common label instructions. The user picks the ones on their own label; MedClear never assigns them. */
+export const HOW_OPTIONS = ['With food', 'Empty stomach', 'Before a meal', 'With a full glass of water', 'Avoid alcohol', "Don't crush or chew", 'Stay upright 30 minutes']
+
 export const PRESETS = [
   { label: 'Morning', time: '08:00' },
   { label: 'Noon', time: '12:00' },

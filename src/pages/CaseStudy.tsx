@@ -17,8 +17,8 @@ export function CaseStudy() {
     <div className="case">
       <header className="case-hero">
         <p className="eyebrow">Product case study</p>
-        <h1>Turning a pharmacy bag into good questions</h1>
-        <p className="lede">A weekend build by Cameron Ross: a free, private tool that helps family caregivers understand a parent's medications and walk into appointments prepared.</p>
+        <h1>What's this pill for, and when do I take it?</h1>
+        <p className="lede">A weekend build by Cameron Ross: a free, private tool for managing medicines at home. It shows what each one is for, when and how to take it, and a daily checklist for you, a parent, or a pet.</p>
         <div className="tiles">
           <div><b>$0</b><span>to run: public FDA and NIH data, no accounts</span></div>
           <div><b>0</b><span>pieces of personal data sent to a server</span></div>
@@ -30,32 +30,32 @@ export function CaseStudy() {
       <section className="case-sec">
         <h2><Icon name="user" /> Who it's for</h2>
         <div className="persona">
-          <div className="avatar" aria-hidden="true">L</div>
+          <div className="avatar" aria-hidden="true">R</div>
           <div>
-            <h3>Linda, 48 <span className="tag list">Illustrative persona</span></h3>
-            <p>Works full-time and coordinates care for her father, Robert (74), who takes eight daily medicines prescribed by three different doctors, and for the family's elderly dog, who takes three more. She isn't clinical. She wonders what each pill is for, when each one is due, and what to ask at the next appointment.</p>
+            <h3>Robert, 62 <span className="tag list">Illustrative persona</span></h3>
+            <p>Takes five medicines a day for diabetes, blood pressure and cholesterol, keeps them in a pill organizer, and still forgets which is which, what each is for, and whether it goes with food. He also helps his 86-year-old mother with hers, and his elderly dog Buddy takes three more.</p>
           </div>
         </div>
         <div className="insight-box">
           <Icon name="bulb" />
-          <p><strong>What changed after version 1:</strong> my dad takes many medicines and needs reminders of when to take them and what each one is for, and his elderly dog takes several too. One list per device wasn't enough, so v2 added profiles for people and pets and a daily checklist.</p>
+          <p><strong>What changed after version 1:</strong> v1 explained one list of medicines. Watching how my own family manages medicines at home showed the gaps: people forget <em>when</em> and <em>how</em> to take each one, not just what it's for, and they often manage a parent's or a pet's medicines too. v2 added profiles for people and pets, dose times, how-to-take instructions, and a daily checklist.</p>
         </div>
-        <div className="journey" role="list" aria-label="Caregiver journey without and with MedClear">
+        <div className="journey" role="list" aria-label="A day with medicines, without and with MedClear">
           {[
-            ['Pharmacy bag', 'Eight bottles, jargon labels'],
-            ['Web search', 'Dense FDA text, scary forums'],
-            ['Appointment', '15 minutes, questions forgotten'],
-            ['After', 'Still unsure what changed'],
+            ['Pill organizer', 'Which one was the morning pill?'],
+            ['What is it for?', 'Labels full of jargon'],
+            ['With food?', 'Instructions long forgotten'],
+            ['Missed dose?', "Can't remember if he took it"],
           ].map(([t, d], i) => (
             <div className="step before" role="listitem" key={t}><span>{i + 1}</span><b>{t}</b><small>{d}</small></div>
           ))}
         </div>
         <div className="journey" role="list">
           {[
-            ['Type the list', 'Misspellings and brand names are fine'],
-            ['Read plain cards', 'Purpose, warnings, recalls'],
-            ['Print questions', 'Grouped by medicine'],
-            ['Share with advocate', 'Next on the roadmap'],
+            ['Add each medicine', 'Brand names and typos are fine'],
+            ['Plain-language card', 'What it is for, in plain words'],
+            ['When and how', 'Times plus with food, empty stomach…'],
+            ['Check off Today', 'For him, his mom and the dog'],
           ].map(([t, d], i) => (
             <div className="step after" role="listitem" key={t}><span>{i + 1}</span><b>{t}</b><small>{d}</small></div>
           ))}
@@ -67,7 +67,7 @@ export function CaseStudy() {
         <div className="accordion">
           <details open>
             <summary>Problem and goal</summary>
-            <p>Older adults on many medicines, and the family members helping them, struggle to understand what each drug does and what to ask. <strong>Goal:</strong> in under five minutes, a caregiver goes from a list of names to a printed, prioritized question sheet.</p>
+            <p>People who take several medicines a day forget what each one is for, when it's due, and how to take it (with food, on an empty stomach). Many also manage a parent's or a pet's medicines. <strong>Goal:</strong> in under five minutes, anyone can go from a pile of bottles to a plain-language list with times, instructions and a daily checklist.</p>
           </details>
           <details>
             <summary>Non-goals</summary>
@@ -78,7 +78,8 @@ export function CaseStudy() {
             <ul>
               <li><span className="tag boxed">P0</span> Add medicines by brand, generic, or misspelled name</li>
               <li><span className="tag boxed">P0</span> Plain-language purpose, boxed warnings, active recalls, cited sources</li>
-              <li><span className="tag boxed">P0</span> Printable, editable question sheet</li>
+              <li><span className="tag boxed">P0</span> Dose times and how-to-take instructions the user enters, and a daily Today checklist</li>
+              <li><span className="tag curated">P1</span> Printable question sheet for the doctor or vet</li>
               <li><span className="tag curated">P1</span> Installable phone app that works offline for lists already looked up</li>
               <li><span className="tag curated">P1</span> Profiles for each person or pet, and a daily checklist of the dose times the user enters</li>
               <li><span className="tag curated">P1</span> Accessible to older eyes: large type, high contrast, keyboard support</li>
@@ -95,11 +96,11 @@ export function CaseStudy() {
         <h2><Icon name="chart" /> How success would be measured</h2>
         <p className="muted">Planned instrumentation. This demo collects no analytics, so there are no usage numbers here by design.</p>
         <div className="tree">
-          <div className="node star"><small>North Star</small><b>Caregivers who leave with a question sheet</b></div>
+          <div className="node star"><small>North Star</small><b>Days with every scheduled dose checked off</b></div>
           <div className="branches">
-            <div className="node"><small>Input</small><b>Lists started</b></div>
+            <div className="node"><small>Input</small><b>Medicines with a time set</b></div>
             <div className="node"><small>Input</small><b>% of names resolved on first try</b></div>
-            <div className="node"><small>Input</small><b>Sheets printed or copied</b></div>
+            <div className="node"><small>Input</small><b>Return visits to Today</b></div>
             <div className="node guard"><small>Guardrail</small><b>Not-found rate &lt; 5%</b></div>
             <div className="node guard"><small>Guardrail</small><b>First card in under 3 seconds</b></div>
           </div>
